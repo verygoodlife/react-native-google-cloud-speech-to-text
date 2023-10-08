@@ -18,6 +18,7 @@ buildscript {
 
 ext {
   grpcVersion = '1.34.1'
+  protobufVersion = '3.14.0'
 }
 
 apply plugin: 'com.android.library'
@@ -59,14 +60,23 @@ android {
 
 protobuf {
   protoc {
-    artifact = 'com.google.protobuf:protoc:3.14.0'
+        if (project.hasProperty('protoc_platform')) {
+            artifact = "com.google.protobuf:protoc:${protobufVersion}:${protoc_platform}"
+        } else {
+            artifact = "com.google.protobuf:protoc:${protobufVersion}"
+        }
+    //artifact = 'com.google.protobuf:protoc:3.14.0'
   }
   plugins {
     javalite {
       artifact = "com.google.protobuf:protoc-gen-javalite:3.0.0"
     }
     grpc {
-      artifact = "io.grpc:protoc-gen-grpc-java:${grpcVersion}"
+            if (project.hasProperty('protoc_platform')) {
+                artifact = "io.grpc:protoc-gen-grpc-java:${grpcVersion}:${protoc_platform}"
+            } else {
+                artifact = "io.grpc:protoc-gen-grpc-java:${grpcVersion}"
+            }
     }
   }
   generateProtoTasks {
